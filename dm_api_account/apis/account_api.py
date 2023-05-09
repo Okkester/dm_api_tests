@@ -5,14 +5,15 @@ from ..models.change_password_model import change_password_model
 from ..models.registration_model import registration_model
 from ..models.reset_password_model import reset_password_model
 from requests import session
+from restclient.restclient import Restclient
 
 
 class AccountApi:
     def __init__(self, host, headers=None):
         self.host = host     # для того чтобы если урл изменится можно было его поменять в одном месте
-        self.session = session()  # нужно для того чтобы один раз авторизовавшись не прокидывать в заголовки тоены постоянно
+        self.client = Restclient(host=host, headers=headers)  # нужно для того чтобы один раз авторизовавшись не прокидывать в заголовки токены постоянно
         if headers:
-            self.session.headers.update(headers)     # обновление заголовков
+            self.client.session.headers.update(headers)     # обновление заголовков
 
     def post_v1_account(self, json: registration_model, **kwargs) -> Response:  # для поддержки возврата объекта response
         """
@@ -20,8 +21,8 @@ class AccountApi:
         :param json registration_model
         :return:
         """
-        response = self.session.post(        # self.session чтобы знать что все запросы будут выполняться в рамках одной сессии
-            url=f"{self.host}/v1/account",
+        response = self.client.post(        # self.session чтобы знать что все запросы будут выполняться в рамках одной сессии
+            path=f"/v1/account",
             json=json,   #раньше было равно payload, но payload перенесли в пакет models (registration_model)
             **kwargs
         )
@@ -33,8 +34,8 @@ class AccountApi:
         :param json: reset_password_model
         :return:
         """
-        response = self.session.post(
-            url=f"{self.host}/v1/account/password",
+        response = self.client.post(
+            path=f"/v1/account/password",
             json=json,
             **kwargs  # с помощью **kwargs можно явно указать заголовки
         )
@@ -46,8 +47,8 @@ class AccountApi:
         :param json: change_email_model
         :return:
         """
-        response = self.session.put(
-            url=f"{self.host}/v1/account/email",
+        response = self.client.put(
+            path=f"/v1/account/email",
             json=json,
             **kwargs
         )
@@ -59,8 +60,8 @@ class AccountApi:
         :param json: change_password_model
         :return:
         """
-        response = self.session.put(
-            url=f"{self.host}/v1/account/password",
+        response = self.client.put(
+            path=f"/v1/account/password",
             json=json,
             **kwargs
         )
@@ -79,8 +80,8 @@ class AccountApi:
             'Accept': 'text/plain'
         }
 
-        response = self.session.put(
-            url=f"{self.host}/v1/account/{token}",
+        response = self.client.put(
+            path=f"/v1/account/{token}",
             headers=headers,
             **kwargs
         )
@@ -97,8 +98,8 @@ class AccountApi:
                   'Accept': 'text/plain'
                 }
 
-        response = self.session.get(
-            url=f"{self.host}v1/account",
+        response = self.client.get(
+            path=f"v1/account",
             headers=headers,
             **kwargs
         )

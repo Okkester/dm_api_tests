@@ -1,18 +1,29 @@
 import requests
 from services.dm_api_account import DmApiAccount
+from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
+import structlog
+
+structlog.configure(
+    processors=[  # набор процессоров форматируют наш код в консоли. Процессоры лежат в либе structlog
+        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+    ]  # параметры процессора: indent - отступ в джсоне, ensure_ascii=False - для работы с русской кодировкой
+)
 
 
 def test_post_v1_account():
+    mailhog = MailhogApi(host="http://localhost:5025")
     api = DmApiAccount(host='http://localhost:5051')
     json = {
-        "login": "login17712",
-        "email": "login17712@mail.ru",
-        "password": "login17712login17712"
+        "login": "login177182",
+        "email": "login177182@mail.ru",
+        "password": "login177182login17715"
     }
-    response = api.account.post_v1_account(
-        json=json
-    )
-    print(response)
+    response = api.account.post_v1_account(json=json)
+    assert response.status_code == 201, f'Статус код ответа должен быть равен 201, но он равен {response.status_code}'
+    token = mailhog.get_token_from_last_email()
+    response = api.account.put_v1_account_token(token=token)
+
+
 # import requests
 #
 #

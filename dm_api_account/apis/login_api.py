@@ -11,7 +11,7 @@ class LoginApi:
         if headers:
             self.session.hesders.update(headers)
 
-    def post_v1_account_login(self, json: login_credentials_model) -> Response:
+    def post_v1_account_login(self, json: login_credentials_model, **kwargs) -> Response:
         """
         Authenticate via credentials
         :param json: login_credentials_model
@@ -20,26 +20,29 @@ class LoginApi:
 
         response = self.session.post(
             url=f"{self.host}/v1/account/login",
-            json=json
+            json=json,
+            **kwargs
         )
         return response
 
-    def delete_v1_account_login(self) -> Response:
+    def delete_v1_account_login(self, **kwargs) -> Response:
         """
         Logout as current user
         :return:
         """
         response = self.session.delete(
-            url=f"{self.host}/v1/account/login"
+            url=f"{self.host}/v1/account/login",
+            **kwargs
         )
         return response
 
-    def delete_v1_account_login_all(self) -> Response:
+    def delete_v1_account_login_all(self, **kwargs) -> Response:
         """
         Logout from every device
         :return:
         """
         response = self.session.delete(
-            url=f"{self.host}/v1/account/login/all"
+            url=f"{self.host}/v1/account/login/all",
+            **kwargs
         )
         return response

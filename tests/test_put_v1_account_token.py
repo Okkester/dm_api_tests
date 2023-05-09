@@ -1,5 +1,13 @@
 import requests
 from services.dm_api_account import DmApiAccount
+# from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
+# import structlog
+#
+# structlog.configure(
+#     processors=[
+#         structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+#     ]
+# )
 
 
 def test_put_v1_account_token():
@@ -7,8 +15,6 @@ def test_put_v1_account_token():
     token = '9a42e835-faa5-4e6b-aa3f-bd574e967411'
     response = api.account.put_v1_account_token(token)
     print(response)
-
-
 
 # def put_v1_account_token():
 #     """
@@ -32,5 +38,3 @@ def test_put_v1_account_token():
 #         data=payload
 #     )
 #     return response
-
-
