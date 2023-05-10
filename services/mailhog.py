@@ -6,7 +6,7 @@ from restclient.restclient import Restclient
 class MailhogApi:
     def __init__(self, host="http://localhost:5025"):
         self.host = host  # на случай если урл-адрес переедет зашиваем его тут по умолчанию
-        self.client = Restclient(host=host)  # чтобы всё в рамках одной сессии выполнялось
+        self.client = Restclient(host=host)  # заменили библиотеку requests на нашу библиотеку с логгированием, которая является оберткой над реквестс
 
     def get_api_v2_messages(self, limit: int = 50) -> Response:
         """

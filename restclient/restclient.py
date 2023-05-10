@@ -25,6 +25,10 @@ class Restclient:
     def put(self, path: str, **kwargs) -> Response:   # 26.07 добавил put
         return self._send_request('PUT', path, **kwargs)
 
+    def delete(self, path: str, **kwargs) -> Response:
+        return self._send_request('DELETE', path, **kwargs)
+
+
     def _send_request(self, method, path, **kwargs):  # 23.27 - в уроке объяснение что происходит
         full_url = self.host + path
         log = self.log.bind(
