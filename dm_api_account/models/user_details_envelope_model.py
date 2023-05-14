@@ -21,7 +21,26 @@ class Rating(BaseModel):  # нужно создавать отдельный к�
     quantity: int
 
 
-class User(BaseModel):
+class Info(BaseModel):
+    value: Optional[StrictStr]
+    parseMode: Optional[StrictStr]
+
+
+class Paging:
+    postsPerPage: int
+    commentsPerPage: int
+    topicsPerPage: int
+    messagesPerPage: int
+    entitiesPerPage: int
+
+
+class Settings(BaseModel):
+    colorSchema: Optional[StrictStr]
+    nannyGreetingsMessage: Optional[StrictStr]
+    paging: Paging
+
+
+class UserDetails(BaseModel):
     login: StrictStr
     roles: List[Roles]
     medium_picture_url: Optional[StrictStr] = Field(alias='mediumPictureUrl')
@@ -32,8 +51,13 @@ class User(BaseModel):
     name: Optional[StrictStr]
     location: Optional[StrictStr]
     registration: Optional[ConstrainedDate]
+    icq: Optional[ConstrainedDate]
+    skype: Optional[ConstrainedDate]
+    originalPictureUrl: Optional[ConstrainedDate]
+    info: Info
+    settings: Settings
 
 
-class UserEnvelopeModel(BaseModel):  # валидация входных моделей от сервера
-    resource: User
+class UserDetailsEnvelopeModel(BaseModel):  # валидация входных моделей от сервера
+    resource: UserDetails
     metadata: Optional[StrictStr]

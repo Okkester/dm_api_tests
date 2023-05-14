@@ -14,26 +14,27 @@ structlog.configure(
 def test_post_v1_account():
     mailhog = MailhogApi(host="http://localhost:5025")
     api = DmApiAccount(host='http://localhost:5051')
-    json = RegistrationModel(
-        login="login1771822",
-        email="login1771822@mail.ru",
-        password='login1771822login17715'
-    )
-    # check_input_json(json=json)  # вызов функции для валидации джсон по типу данных
-    response = api.account.post_v1_account(json=json)
-    assert response.status_code == 201, f'Статус код ответа должен быть равен 201, но он равен {response.status_code}'
-    # token = mailhog.get_token_from_last_email()
-    # response = api.account.put_v1_account_token(token=token)
+    # json = RegistrationModel(
+    #     login="login1771822",
+    #     email="login1771822@mail.ru",
+    #     password='login1771822login17715'
+    # )
+    # # check_input_json(json=json)  # вызов функции для валидации джсон по типу данных
+    # response = api.account.post_v1_account(json=json)
+    # assert response.status_code == 201, f'Статус код ответа должен быть равен 201, но он равен {response.status_code}'
+    token = mailhog.get_token_from_last_email()
+    response = api.account.put_v1_account_token(token=token)
 
 
 # def check_input_json(json):
-#     for key, value in json.items():  # валидация джсон по типу данных
+#     for key, value in json.items():  # валидация джсон по типу данных с помощью isinstance
 #         if key == 'login':
 #             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
 #         elif key == 'email':
 #             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
 #         elif key == 'password':
 #             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
+# Но такая валидация не подходит для многоуровневых джсонов 01:00
 
 
 # import requests

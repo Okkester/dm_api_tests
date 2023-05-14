@@ -1,4 +1,5 @@
 from pydantic import BaseModel, StrictStr
+# pydantic - для валидации джсонов
 
 # registration_model = {
 #     "login": "login1771",
