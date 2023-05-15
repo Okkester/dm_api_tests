@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import List, Optional
-# List - нужно импортировать так как предаётся список из ролей
+# List - нужно импортировать так как передаётся список из ролей
 # типом Optional нужно разметить все поля, которые не обязательные, т.к. по умолчанию в pydantic все поля обязательные
 from pydantic import BaseModel, StrictStr, Field, StrictBool, ConstrainedDate
 # pydantic - для валидации джсонов
+from datetime import datetime
 
 
 class Roles(Enum):
@@ -23,20 +24,20 @@ class Rating(BaseModel):  # нужно создавать отдельный к�
 
 class Info(BaseModel):
     value: Optional[StrictStr]
-    parseMode: Optional[StrictStr]
+    parse_mode: Optional[StrictStr] = Field(alias='parseMode')
 
 
 class Paging:
-    postsPerPage: int
-    commentsPerPage: int
-    topicsPerPage: int
-    messagesPerPage: int
-    entitiesPerPage: int
+    posts_per_page: int = Field(alias='postsPerPage')
+    comments_per_page: int = Field(alias='commentsPerPage')
+    topics_per_page: int = Field(alias='topicsPerPage')
+    messages_per_page: int = Field(alias='messagesPerPage')
+    entities_per_page: int = Field(alias='entitiesPerPage')
 
 
 class Settings(BaseModel):
-    colorSchema: Optional[StrictStr]
-    nannyGreetingsMessage: Optional[StrictStr]
+    color_schema: Optional[StrictStr] = Field(alias='colorSchema')
+    nanny_greetings_message: Optional[StrictStr] = Field(alias='nannyGreetingsMessage')
     paging: Paging
 
 
@@ -47,13 +48,13 @@ class UserDetails(BaseModel):
     small_picture_url: Optional[StrictStr] = Field(alias='smallPictureUrl')
     status: Optional[StrictStr]
     rating: Rating
-    online: Optional[ConstrainedDate]
+    online: Optional[datetime]
     name: Optional[StrictStr]
     location: Optional[StrictStr]
-    registration: Optional[ConstrainedDate]
-    icq: Optional[ConstrainedDate]
-    skype: Optional[ConstrainedDate]
-    originalPictureUrl: Optional[ConstrainedDate]
+    registration: Optional[datetime]
+    icq: Optional[StrictStr]
+    skype: Optional[StrictStr]
+    original_picture_url: Optional[StrictStr] = Field(alias='originalPictureUrl')
     info: Info
     settings: Settings
 

@@ -4,6 +4,7 @@ from typing import List, Optional
 # типом Optional нужно разметить все поля, которые не обязательные, т.к. по умолчанию в pydantic все поля обязательные
 from pydantic import BaseModel, StrictStr, Field, StrictBool, ConstrainedDate
 # pydantic - для валидации джсонов
+from datetime import datetime
 
 
 class Roles(Enum):
@@ -28,10 +29,10 @@ class User(BaseModel):
     small_picture_url: Optional[StrictStr] = Field(alias='smallPictureUrl')
     status: Optional[StrictStr]
     rating: Rating
-    online: Optional[ConstrainedDate]
+    online: Optional[datetime]
     name: Optional[StrictStr]
     location: Optional[StrictStr]
-    registration: Optional[ConstrainedDate]
+    registration: Optional[datetime]
 
 
 class UserEnvelopeModel(BaseModel):  # валидация входных моделей от сервера
