@@ -1,13 +1,12 @@
-from pydantic import BaseModel, StrictStr
+from __future__ import annotations
+from typing import Optional
+from pydantic import BaseModel, StrictStr, Extra, Field
 
 
-class ChangeEmailModel(BaseModel):
-    login: StrictStr
-    email: StrictStr
-    password: StrictStr
+class ChangeEmail(BaseModel):
+    class Config:
+        extra = Extra.forbid
 
-# change_email_model = {
-#     "login": "login1771",
-#     "email": "login1771@mail.ru",
-#     "password": "login1771login1771"
-# }
+    login: Optional[StrictStr] = Field(None, description='User login')
+    password: Optional[StrictStr] = Field(None, description='User password')
+    email: Optional[StrictStr] = Field(None, description='New user email')

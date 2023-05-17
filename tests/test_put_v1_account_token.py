@@ -1,20 +1,47 @@
 import requests
 from services.dm_api_account import DmApiAccount
+import json
+from hamcrest import assert_that, has_properties  # для сравнения полей с ожидаемыми полями в ответе
+from dm_api_account.models.user_envelope_model import UserRole
 # from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
-# import structlog
-#
-# structlog.configure(
-#     processors=[
-#         structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
-#     ]
-# )
+import structlog
+
+structlog.configure(
+    processors=[
+        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+    ]
+)
 
 
 def test_put_v1_account_token():
     api = DmApiAccount(host='http://localhost:5051')
-    token = '9a42e835-faa5-4e6b-aa3f-bd574e967411'
-    response = api.account.put_v1_account_token(token)
-    print(response)
+    token = 'afc0f02c-1288-452c-8acb-5e52fe445648'
+    response = api.account.put_v1_account_token(token, status_code=200)
+    assert_that(response.resource, has_properties(
+        {
+            "login": "doctest0003",
+            "roles": [UserRole.GUEST, UserRole.PLAYER]
+        }
+    ))
+
+
+
+
+
+    # expected_json = {'resource': {
+    #     "login": "doctest0004",
+    #     "rating": {
+    #         "enabled": True,
+    #         "quality": 0,
+    #         "quantity": 0
+    #     },
+    #     "roles": [
+    #         "Guest",
+    #         "Player"
+    #     ],
+    # }}
+    # actual_json = json.loads(response.json(by_alias=True, exclude_none=True))
+    # assert actual_json == expected_json
 
 # def put_v1_account_token():
 #     """
