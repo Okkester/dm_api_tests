@@ -67,7 +67,7 @@ class AccountApi:  # Это наш клиент
             json: ChangeEmail,
             status_code: int,
             **kwargs
-    ) -> Response:
+    ) -> Response | UserEnvelope:
         """
         Change registered user email
         :param status_code:
@@ -80,6 +80,8 @@ class AccountApi:  # Это наш клиент
             **kwargs
         )
         validate_status_code(response, status_code)
+        if response.status_code == 200:
+            return UserEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
@@ -87,7 +89,7 @@ class AccountApi:  # Это наш клиент
             json: ChangePassword,
             status_code: int,
             **kwargs
-    ) -> Response:
+    ) -> Response | UserEnvelope:
         """
         Change registered user password
         :param status_code:
@@ -100,6 +102,8 @@ class AccountApi:  # Это наш клиент
             **kwargs
         )
         validate_status_code(response, status_code)
+        if response.status_code == 200:
+            return UserEnvelope(**response.json())
         return response
 
     def put_v1_account_token(

@@ -1,7 +1,7 @@
 import requests
 from services.dm_api_account import DmApiAccount
 import json
-from hamcrest import assert_that, has_properties  # для сравнения полей с ожидаемыми полями в ответе
+from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
 from dm_api_account.models.user_envelope_model import UserRole
 # from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
 import structlog
@@ -15,11 +15,10 @@ structlog.configure(
 
 def test_put_v1_account_token():
     api = DmApiAccount(host='http://localhost:5051')
-    token = 'afc0f02c-1288-452c-8acb-5e52fe445648'
-    response = api.account.put_v1_account_token(token, status_code=200)
-    assert_that(response.resource, has_properties(
+    response = api.account.put_v1_account_token(token='2ac7000e-7959-432c-b5fd-5a4151bab565', status_code=200)
+    assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {
-            "login": "doctest0003",
+            "login": "stri23423333ng",
             "roles": [UserRole.GUEST, UserRole.PLAYER]
         }
     ))

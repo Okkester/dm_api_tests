@@ -1,18 +1,48 @@
 import requests
 from services.dm_api_account import DmApiAccount
+from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
+from dm_api_account.models.user_envelope_model import UserRole
+import structlog
+
+structlog.configure(
+    processors=[
+        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+    ]
+)
 
 
 def test_put_v1_account_email():
     api = DmApiAccount(host='http://localhost:5051')
     json = {
-        "login": "login1771",
+        "login": "login17712",
         "email": "login1771@mail.ru",
         "password": "login1771login1771"
     }
     response = api.account.put_v1_account_email(
-        json=json
+        json=json,
+        status_code=200
     )
-    print(response)
+    assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
+        {
+            "login": "login17712",
+            "roles": [UserRole.GUEST, UserRole.PLAYER]
+        }
+    ))
+
+
+
+
+# def test_put_v1_account_email():
+#     api = DmApiAccount(host='http://localhost:5051')
+#     json = {
+#         "login": "login1771",
+#         "email": "login1771@mail.ru",
+#         "password": "login1771login1771"
+#     }
+#     response = api.account.put_v1_account_email(
+#         json=json
+#     )
+#     print(response)
 
 
 # def put_v1_account_email():
@@ -41,4 +71,3 @@ def test_put_v1_account_email():
 #       json=payload
 #     )
 #     return response
-
