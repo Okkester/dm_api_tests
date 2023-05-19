@@ -14,10 +14,10 @@ structlog.configure(
 def test_put_v1_account_password():
     api = DmApiAccount(host='http://localhost:5051')
     json = {
-        "login": "login17713",
-        "token": "<uuid>",
-        "oldPassword": "<string>",
-        "newPassword": "<string>"
+        "login": "strsdfas0001",
+        "token": "4a680634-96db-4e31-a209-778353c7bc08",
+        "oldPassword": "stf4f0001",
+        "newPassword": "stf4f0002"
     }
     response = api.account.put_v1_account_password(
         json=json,

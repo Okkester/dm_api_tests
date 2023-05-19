@@ -14,8 +14,8 @@ structlog.configure(
 def test_post_v1_account_password():
     api = DmApiAccount(host='http://localhost:5051')
     json = {
-        "login": "login1771",
-        "email": "login1771@mail.ru"
+        "login": "strsdfas0004",
+        "email": "strf4f4f0004@mail.ru"
     }
     response = api.account.post_v1_account_password(
         json=json,
@@ -23,7 +23,7 @@ def test_post_v1_account_password():
     )
     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {
-            "login": "login1771",
+            "login": "strsdfas0004",
             "roles": [UserRole.GUEST, UserRole.PLAYER]
         }
     ))

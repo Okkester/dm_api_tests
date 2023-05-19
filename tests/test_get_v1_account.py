@@ -15,7 +15,7 @@ structlog.configure(
 def test_get_v1_account():
     api = DmApiAccount(host='http://localhost:5051')
     headers = {
-        'X-Dm-Auth-Token': '<string>',
+        'X-Dm-Auth-Token': 'IQJh+zgzF5DOuBBWRs9shMXToTcuU+Q4OvbgTPgLWKHHrqeXocd5s9k4pm7ssjUJQ3RGXJcy6PFWyzoktuLbIX5vKPKHXvrvIq/Bqp/iJrHe0OTpBZcuPXmZ7XFk2q9hyiJajqpVdDw=',
         'X-Dm-Bb-Render-Mode': '<string>',
         'Accept': 'text/plain'
     }
@@ -25,7 +25,7 @@ def test_get_v1_account():
     )
     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {
-            "login": "login17712",
+            "login": "login177180001",
             "roles": [UserRole.GUEST, UserRole.PLAYER]
         }
     ))
