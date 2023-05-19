@@ -15,9 +15,9 @@ def test_post_v1_account():
     mailhog = MailhogApi(host="http://localhost:5025")
     api = DmApiAccount(host='http://localhost:5051')
     json = Registration(
-        login='login17718',
-        email="login177182233@mail.ru",
-        password='login177182332login17715'
+        login='login177180001',
+        email="login177180001@mail.ru",
+        password='login170001'
     )
     # check_input_json(json=json)  # вызов функции для валидации джсон по типу данных
     response = api.account.post_v1_account(json=json)

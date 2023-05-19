@@ -15,10 +15,10 @@ structlog.configure(
 
 def test_put_v1_account_token():
     api = DmApiAccount(host='http://localhost:5051')
-    response = api.account.put_v1_account_token(token='2ac7000e-7959-432c-b5fd-5a4151bab565', status_code=200)
+    response = api.account.put_v1_account_token(token='d6346921-ced2-4f58-bdd0-067899cdd57b', status_code=200)
     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {
-            "login": "stri23423333ng",
+            "login": "login177180001",
             "roles": [UserRole.GUEST, UserRole.PLAYER]
         }
     ))
