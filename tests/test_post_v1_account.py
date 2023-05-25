@@ -11,9 +11,9 @@ structlog.configure(
 def test_post_v1_account():
     api = Facade(host='http://localhost:5051')  # инициализация
     # register new user
-    login = 'strtest4'    # завели три переменные для регистрации->активации->авторизации
-    email = 'strtest4@mail.ru'
-    password = 'strtest4'
+    login = 'strtest6'    # завели три переменные для регистрации->активации->авторизации
+    email = 'strtest6@mail.ru'
+    password = 'strtest6'
     response = api.account.register_new_user(  # прописали обёртку над методом из helpers Account
         login=login,
         email=email,
@@ -29,11 +29,11 @@ def test_post_v1_account():
     )
 
     # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
-    token = api.login.get_auth_token(login='strtest1', password='strtest1')    # возвращает авторизационный токен X-Dm-Auth-Token
+    token = api.login.get_auth_token(login='strtest6', password='strtest6')    # возвращает авторизационный токен X-Dm-Auth-Token
     api.login_api.delete_v1_account_login(headers=token)
 
 
-    # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
-    token = api.login.get_auth_token(login='strtest1', password='strtest1')    # возвращает авторизационный токен X-Dm-Auth-Token
-    api.login.set_headers(headers=token)
-    api.login.logout_user()
+    # # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
+    # token = api.login.get_auth_token(login='strtest4', password='strtest4')    # возвращает авторизационный токен X-Dm-Auth-Token
+    # api.login.set_headers(headers=token)
+    # api.login.logout_user()
