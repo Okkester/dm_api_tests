@@ -1,8 +1,5 @@
-import requests
-from services.dm_api_account import DmApiAccount
-from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
+from services.dm_api_account import Facade
 import structlog
-from dm_api_account.models.registration_model import Registration
 
 structlog.configure(
     processors=[  # набор процессоров форматируют наш код в консоли. Процессоры лежат в либе structlog
@@ -12,71 +9,31 @@ structlog.configure(
 
 
 def test_post_v1_account():
-    mailhog = MailhogApi(host="http://localhost:5025")
-    api = DmApiAccount(host='http://localhost:5051')
-    json = Registration(
-        login='login177180001',
-        email="login177180001@mail.ru",
-        password='login170001'
+    api = Facade(host='http://localhost:5051')  # инициализация
+    # register new user
+    login = 'strtest4'    # завели три переменные для регистрации->активации->авторизации
+    email = 'strtest4@mail.ru'
+    password = 'strtest4'
+    response = api.account.register_new_user(  # прописали обёртку над методом из helpers Account
+        login=login,
+        email=email,
+        password=password
     )
-    # check_input_json(json=json)  # вызов функции для валидации джсон по типу данных
-    response = api.account.post_v1_account(json=json)
-    # token = mailhog.get_token_from_last_email()
-    # response = api.account.put_v1_account_token(token=token)
+    # activate  user
+    api.account.activate_registered_user(login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
+
+    # Login  user
+    api.login.login_user(
+        login=login,
+        password=password
+    )
+
+    # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
+    token = api.login.get_auth_token(login='strtest1', password='strtest1')    # возвращает авторизационный токен X-Dm-Auth-Token
+    api.login_api.delete_v1_account_login(headers=token)
 
 
-# def check_input_json(json):
-#     for key, value in json.items():  # валидация джсон по типу данных с помощью isinstance
-#         if key == 'login':
-#             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
-#         elif key == 'email':
-#             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
-#         elif key == 'password':
-#             assert isinstance(value, str), f'Тип значения в ключе {key} должен быть str, но получен {type(value)}'
-# Но такая валидация не подходит для многоуровневых джсонов 01:00
-
-
-# import requests
-#
-#
-# def post_v1_account():
-#     """
-#     Register new user
-#     :return:
-#     """
-#     url = "http://localhost:5051/v1/account"
-#
-#     payload = {
-#         "login": "login1771",
-#         "email": "login1771@mail.ru",
-#         "password": "login1771login1771"
-#     }
-#     headers = {
-#         'X-Dm-Auth-Token': '<string>',
-#         'X-Dm-Bb-Render-Mode': '<string>',
-#         'Content-Type': 'application/json',
-#         'Accept': 'text/plain'
-#     }
-#
-#     response = requests.request(
-#         method="POST",
-#         url=url,
-#         headers=headers,
-#         json=payload
-#     )
-#     return response
-#
-#
-# response = post_v1_account()
-#
-# # свойства ответа:
-# print(response.content)
-# print(response.url)
-# print(response.status_code)
-# print(response.json())
-#
-# # свойства запроса
-# print(response.request.url)
-# print(response.request.method)
-# print(response.request.headers)
-# print(response.request.body)
+    # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
+    token = api.login.get_auth_token(login='strtest1', password='strtest1')    # возвращает авторизационный токен X-Dm-Auth-Token
+    api.login.set_headers(headers=token)
+    api.login.logout_user()

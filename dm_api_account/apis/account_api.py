@@ -130,7 +130,7 @@ class AccountApi:  # Это наш клиент
 
     def get_v1_account(
             self,
-            status_code: int,
+            status_code: int = 200,  # добавил на 08:16
             **kwargs
     ) -> Response | UserDetailsEnvelope:
         """
@@ -139,7 +139,7 @@ class AccountApi:  # Это наш клиент
         """
 
         response = self.client.get(
-            path=f"v1/account",
+            path=f"/v1/account",
             **kwargs
         )
         validate_status_code(response, status_code)

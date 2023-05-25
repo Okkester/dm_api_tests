@@ -1,5 +1,5 @@
 import requests
-from services.dm_api_account import DmApiAccount
+from services.dm_api_account import Facade
 import structlog
 
 structlog.configure(
@@ -10,7 +10,7 @@ structlog.configure(
 
 
 def test_delete_v1_account_login_all():
-    api = DmApiAccount(host='http://localhost:5051')
+    api = Facade(host='http://localhost:5051')
     headers = {
         'X-Dm-Auth-Token': 'IQJh+zgzF5C6aD9mqQUFu7UTPKMLiqANOWWewewAMIx2UXGllRCZPOE0syF8v/f0kAna2FA+uJbiLt7M+Bdw63XkHoWleSEOJlUYZ75G6s2sELNs59Fbf9lAIkokrzQoZyeZ/Lqqa2w=',
         'X-Dm-Bb-Render-Mode': '<string>',

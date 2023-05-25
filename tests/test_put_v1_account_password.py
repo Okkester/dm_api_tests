@@ -1,5 +1,5 @@
 import requests
-from services.dm_api_account import DmApiAccount
+from services.dm_api_account import Facade
 from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
 from dm_api_account.models.user_envelope_model import UserRole
 import structlog
@@ -12,7 +12,7 @@ structlog.configure(
 
 
 def test_put_v1_account_password():
-    api = DmApiAccount(host='http://localhost:5051')
+    api = Facade(host='http://localhost:5051')
     json = {
         "login": "strsdfas0001",
         "token": "4a680634-96db-4e31-a209-778353c7bc08",

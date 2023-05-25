@@ -1,5 +1,5 @@
 import requests
-from services.dm_api_account import DmApiAccount
+from services.dm_api_account import Facade
 import json
 from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
 from dm_api_account.models.user_envelope_model import UserRole
@@ -14,7 +14,7 @@ structlog.configure(
 
 
 def test_put_v1_account_token():
-    api = DmApiAccount(host='http://localhost:5051')
+    api = Facade(host='http://localhost:5051')
     response = api.account.put_v1_account_token(token='d6346921-ced2-4f58-bdd0-067899cdd57b', status_code=200)
     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {

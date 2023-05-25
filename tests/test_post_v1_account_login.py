@@ -1,33 +1,49 @@
 import requests
-from services.dm_api_account import DmApiAccount
-from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
-from dm_api_account.models.user_envelope_model import UserRole
-import structlog
-
-structlog.configure(
-    processors=[
-        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
-    ]
-)
+from services.dm_api_account import Facade
 
 
 def test_post_v1_account_login():
-    api = DmApiAccount(host='http://localhost:5051')
-    json = {
-        "login": "login177180001",
-        "password": "login170001",
-        "rememberMe": False
-    }
-    response = api.login.post_v1_account_login(
-        json=json,
-        status_code=200
+    api = Facade(host='http://localhost:5051')
+    api.login.login_user(
+        login='str435hg345hing8',
+        password='str435hg345h8ng1',
+        remember_me=True
     )
-    assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
-        {
-            "login": "login177180001",
-            "roles": [UserRole.GUEST, UserRole.PLAYER]
-        }
-    ))
+
+
+
+
+
+# import requests
+# from services.dm_api_account import Facade
+# from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
+# from dm_api_account.models.user_envelope_model import UserRole
+# import structlog
+#
+# structlog.configure(
+#     processors=[
+#         structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+#     ]
+# )
+#
+#
+# def test_post_v1_account_login():
+#     api = Facade(host='http://localhost:5051')
+#     json = {
+#         "login": "login177180001",
+#         "password": "login170001",
+#         "rememberMe": False
+#     }
+#     response = api.login.post_v1_account_login(
+#         json=json,
+#         status_code=200
+#     )
+#     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
+#         {
+#             "login": "login177180001",
+#             "roles": [UserRole.GUEST, UserRole.PLAYER]
+#         }
+#     ))
 
 
 
