@@ -14,10 +14,9 @@ def test_get_v1_account():
     token = api.login.get_auth_token(login='strtest1', password='strtest1')  # получение токена X-Dm-Auth-Token
     api.account.set_headers(headers=token)  # устанока заголовков (токена) в клиент в аккаунт
     api.login.set_headers(headers=token)  # устанока заголовков (токена) в клиент в логин
-
     api.account.get_current_user_info()  # для получения информации о пользователе
-    # api.login.logout_user()  # логаут
-    api.login.logout_user_from_all_devices()  # логаут со всех устройств
+    api.login.logout_user()  # логаут
+    # api.login.logout_user_from_all_devices()  # логаут со всех устройств
 
 
 
