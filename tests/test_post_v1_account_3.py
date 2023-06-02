@@ -1,5 +1,6 @@
 import time
-
+from generic.helpers.orm_db import OrmDatabase
+from generic.helpers.orm_models import Users
 from generic.helpers.dm_db import DmDatabase
 from services.dm_api_account import Facade
 import structlog
@@ -14,13 +15,14 @@ structlog.configure(
 def test_post_v1_account():
     api = Facade(host='http://localhost:5051')  # инициализация
     # register new user
-    login = 'intest2'  # завели три переменные для регистрации->активации->авторизации
-    email = 'intest2@mail.ru'
-    password = 'intest2'
+    login = 'rstrtest1'  # завели три переменные для регистрации->активации->авторизации
+    email = 'rstrtest1@mail.ru'
+    password = 'rstrtest1'
 
-    db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
-    db.delete_user_by_login(login=login)
-    dataset = db.get_user_by_login(login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
+    orm = OrmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
+    orm.delete_user_by_login(login=login)
+    dataset = orm.get_user_by_login(
+        login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
     assert len(dataset) == 0  # проверка того что такого юзера нет в БД
 
     api.mailhog.delete_all_messages()  # удаляем все письма пользователя
@@ -30,17 +32,19 @@ def test_post_v1_account():
         email=email,
         password=password
     )
-    dataset = db.get_user_by_login(login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
+    dataset = orm.get_user_by_login(
+        login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
     for row in dataset:
-        assert row['Login'] == login, f'User {login} not registered'  # проверка того что юзер зарегистрирован
-        assert row['Activated'] is False, f'User {login} was activated'  # проверка что юзер не активирован
+        assert row.Login == login, f'User {login} not registered'  # проверка того что юзер зарегистрирован
+        assert row.Activated is False, f'User {login} was activated'  # проверка что юзер не активирован
 
     # activate  user
-    api.account.activate_registered_user(login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
+    api.account.activate_registered_user(
+        login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
     time.sleep(2)  # чтобы дождаться проставления признака activated в БД
-    dataset = db.get_user_by_login(login=login)  # запрос обновлённой инфы по юзеру
+    dataset = orm.get_user_by_login(login=login)  # запрос обновлённой инфы по юзеру
     for row in dataset:
-        assert row['Activated'] is True, f'User {login} not activated'  # проверка что юзер активирован
+        assert row.Activated is True, f'User {login} not activated'  # проверка что юзер активирован
 
     # Login  user
     api.login.login_user(
@@ -49,19 +53,13 @@ def test_post_v1_account():
     )
 
 
-
-
-
-
-
-
-
-    # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
+    # # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
     # token = api.login.get_auth_token(login='strtest6',
     #                                  password='strtest6')  # возвращает авторизационный токен X-Dm-Auth-Token
     # api.login_api.delete_v1_account_login(headers=token)
-
+    #
     # # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
-    # token = api.login.get_auth_token(login='strtest4', password='strtest4')    # возвращает авторизационный токен X-Dm-Auth-Token
+    # token = api.login.get_auth_token(login='strtest4',
+    #                                  password='strtest4')  # возвращает авторизационный токен X-Dm-Auth-Token
     # api.login.set_headers(headers=token)
     # api.login.logout_user()

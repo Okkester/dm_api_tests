@@ -25,14 +25,14 @@ def test_post_v1_account():
         email=email,
         password=password
     )
-    # ДЗ - 1 задание
+    # ДЗ - 1 задание (урок 11)
 
     db.update_activated_status_user_by_login(login=login)
     dataset = db.get_user_by_login(login=login)
     for row in dataset:
         assert row['Activated'] is True, f'User {login} was not activated'  # проверка того что sql-запрос активировал пользователя
 
-    # ДЗ - 2 задание
+    # ДЗ - 2 задание (урок 11)
 
     api.account.activate_registered_user(login=login)
     time.sleep(2)  # чтобы дождаться проставления признака activated в БД
