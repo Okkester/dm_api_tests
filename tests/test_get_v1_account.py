@@ -2,20 +2,13 @@ import requests
 from services.dm_api_account import Facade
 import structlog
 
-structlog.configure(
-    processors=[  # набор процессоров форматируют наш код в консоли. Процессоры лежат в либе structlog
-        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
-    ]  # параметры процессора: indent - отступ в джсоне, ensure_ascii=False - для работы с русской кодировкой
-)
 
-
-def test_get_v1_account():
-    api = Facade(host='http://localhost:5051')
-    token = api.login.get_auth_token(login='strtest1', password='strtest1')  # получение токена X-Dm-Auth-Token
-    api.account.set_headers(headers=token)  # устанока заголовков (токена) в клиент в аккаунт
-    api.login.set_headers(headers=token)  # устанока заголовков (токена) в клиент в логин
-    api.account.get_current_user_info()  # для получения информации о пользователе
-    api.login.logout_user()  # логаут
+def test_get_v1_account(dm_api_facade):
+    token = dm_api_facade.login.get_auth_token(login='strtest1', password='strtest1')  # получение токена X-Dm-Auth-Token
+    dm_api_facade.account.set_headers(headers=token)  # устанока заголовков (токена) в клиент в аккаунт
+    dm_api_facade.login.set_headers(headers=token)  # устанока заголовков (токена) в клиент в логин
+    dm_api_facade.account.get_current_user_info()  # для получения информации о пользователе
+    dm_api_facade.login.logout_user()  # логаут
     # api.login.logout_user_from_all_devices()  # логаут со всех устройств
 
 

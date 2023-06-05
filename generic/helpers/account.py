@@ -29,3 +29,14 @@ class Account:  # отвечает за регистрацию и активац
     def get_current_user_info(self, **kwargs):
         response = self.facade.account_api.get_v1_account(**kwargs)
         return response
+
+    def register_new_user_2(self, login: str, email: str, password: str, status_code: int):  # для дз по фикстурам добавил status_code
+        response = self.facade.account_api.post_v1_account(
+            json=Registration(  # вынесли Registration не как модель, а как параметр
+                login=login,
+                email=email,
+                password=password
+            ),
+            status_code=status_code  # для дз по фикстурам добавил status_code
+        )
+        return response
