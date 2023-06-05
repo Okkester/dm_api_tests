@@ -121,7 +121,7 @@ def random_string_2(begin=1, end=30):
     return string
 
 
-@pytest.mark.parametrize('login, email, password, status_code, password_check', [
+@pytest.mark.parametrize('login, email, password, status_code, login_check', [
     ('14', '14@14.ru', '12334567', 201, ''),  # Валидные данные
     ('13', '13@13.ru', random_string_2(1, 5), 400, {"Password": ["Short"]}),  # Пароль <= 5 символам
     ('2', '13@13.ru', '1234567', 400, {"Login": ["Short"]}),  # Логин менее 2 символов
@@ -135,7 +135,9 @@ def test_create_and_activate_user_with_random_params(
         email,
         password,
         status_code,
-        password_check
+        # password_check
+        login_check
+        # email_check
 ):
     dm_db.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
@@ -171,8 +173,8 @@ def test_create_and_activate_user_with_random_params(
             password=password
         )
     else:
-        assert_that(response.json(), has_entries(
+        assert_that(response.json()['errors'], has_entries(
             {
-                "Password": [password_check]
+                "Login": [login_check]
             }
         ))
