@@ -135,7 +135,7 @@ def test_create_and_activate_user_with_random_params(
         email,
         password,
         status_code,
-        # password_check
+        # password_check,
         login_check
         # email_check
 ):
@@ -175,6 +175,8 @@ def test_create_and_activate_user_with_random_params(
     else:
         assert_that(response.json()['errors'], has_entries(
             {
-                "Login": [login_check]
+                # "Password": ["Short"],
+                "Login": ["Short"]
+                # "Email": ["Invalid"]
             }
         ))
