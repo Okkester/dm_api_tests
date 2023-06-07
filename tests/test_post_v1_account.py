@@ -1,4 +1,6 @@
 import time
+
+import allure
 import pytest
 from hamcrest import assert_that, has_entries
 from collections import namedtuple
@@ -6,58 +8,6 @@ from string import ascii_letters, digits
 import random
 
 
-@pytest.fixture
-def prepare_user(dm_api_facade, dm_db):
-    user = namedtuple('User',
-                      'login, email, password')  # объект namedtuple 'User',в котором указаны хранимые в нём поля
-    User = user(login="intest28", email="intest28@mail.ru", password="intest28")
-    dm_db.delete_user_by_login(login=User.login)  # удаление юзера из БД
-    dataset = dm_db.get_user_by_login(login=User.login)
-    assert len(dataset) == 0  # проверка того что такого юзера нет в БД
-    dm_api_facade.mailhog.delete_all_messages()  # удаляем все письма пользователя
-    return User
-
-
-def test_post_v1_account(dm_api_facade, dm_db, prepare_user):
-    # register new user
-    login = prepare_user.login
-    email = prepare_user.email
-    password = prepare_user.password
-    response = dm_api_facade.account.register_new_user(  # прописали обёртку над методом из helpers Account
-        login=login,
-        email=email,
-        password=password
-    )
-    dataset = dm_db.get_user_by_login(
-        login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
-    # activate  user
-    dm_api_facade.account.activate_registered_user(
-        login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
-    time.sleep(2)  # чтобы дождаться проставления признака activated в БД
-    dataset = dm_db.get_user_by_login(login=login)  # запрос обновлённой инфы по юзеру
-    for row in dataset:
-        assert row['Activated'] is True, f'User {login} not activated'  # проверка что юзер активирован
-
-    # Login  user
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
-
-
-@pytest.mark.parametrize('login, email, password', [  # пишем какие поля меняем и в кортеже перечисляем тестовые значения
-    ('intest29', 'intest29@mail.ru', 'intest29'),
-    ('intestttt', 'intesttt@mail.ru', 'intestttt'),
-    ('234343429', '34623423429@mail.ru', '2345234529'),
-    ('/////////', '//////////@mail.ru', '///////////')
-])
 def random_string():
     symbols = ascii_letters + digits
     string = ''
@@ -66,51 +16,93 @@ def random_string():
     return string
 
 
-@pytest.mark.parametrize('login', [random_string() for _ in range(3)])
-@pytest.mark.parametrize('email', [random_string() + '@' + random_string() + '.ru' for _ in range(3)])
-@pytest.mark.parametrize('password', [random_string() for _ in range(3)])
-def test_post_v1_account_2(dm_api_facade, dm_db, login, email, password):
-    dm_db.delete_user_by_login(login=login)
-    dm_api_facade.mailhog.delete_all_messages()
+@allure.suite("Тесты на проверку метода POST{host}/v1/account")
+@allure.sub_suite("Позитивные проверки")
+class TestsPostV1Account:
+    @allure.step("Подготовка тестовго пользователя")
+    @pytest.fixture
+    def prepare_user(self, dm_api_facade, dm_db):
+        user = namedtuple('User',
+                          'login, email, password')  # объект namedtuple 'User',в котором указаны хранимые в нём поля
+        User = user(login="intest28", email="intest28@mail.ru", password="intest28")
+        dm_db.delete_user_by_login(login=User.login)  # удаление юзера из БД
+        dataset = dm_db.get_user_by_login(login=User.login)
+        assert len(dataset) == 0  # проверка того что такого юзера нет в БД
+        dm_api_facade.mailhog.delete_all_messages()  # удаляем все письма пользователя
+        return User
 
-    # register new user
-    response = dm_api_facade.account.register_new_user(  # прописали обёртку над методом из helpers Account
-        login=login,
-        email=email,
-        password=password
-    )
-    dataset = dm_db.get_user_by_login(
-        login=login)  # получение юзера по его логину чтобы посмотреть появилась ли запись в БД
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
-    # activate  user
-    dm_api_facade.account.activate_registered_user(
-        login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
-    time.sleep(2)  # чтобы дождаться проставления признака activated в БД
-    dataset = dm_db.get_user_by_login(login=login)  # запрос обновлённой инфы по юзеру
-    for row in dataset:
-        assert row['Activated'] is True, f'User {login} not activated'  # проверка что юзер активирован
+    @allure.title("Проверка регистрации и активации пользователя")
+    def test_register_and_activate_user(self, dm_api_facade, dm_db, prepare_user, assertions):
+        """
+        Тест проверяет создание и активацию пользователя в базе данных
+        """
+        # register new user
+        login = prepare_user.login
+        email = prepare_user.email
+        password = prepare_user.password
+        dm_api_facade.account.register_new_user(  # прописали обёртку над методом из helpers Account
+            login=login,
+            email=email,
+            password=password
+        )
+        assertions.check_user_was_created(login=login)
+        # activate  user
+        dm_api_facade.account.activate_registered_user(
+                login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
+        assertions.check_user_was_activated(login=login)
+        # Login  user
+        dm_api_facade.login.login_user(
+            login=login,
+            password=password
+        )
 
-    # Login  user
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
+    # @pytest.mark.parametrize('login, email, password',
+    #                          [  # пишем какие поля меняем и в кортеже перечисляем тестовые значения
+    #                              ('intest29', 'intest29@mail.ru', 'intest29'),
+    #                              ('intestttt', 'intesttt@mail.ru', 'intestttt'),
+    #                              ('234343429', '34623423429@mail.ru', '2345234529'),
+    #                              ('/////////', '//////////@mail.ru', '///////////')
+    #                          ])
+    @pytest.mark.parametrize('login', [random_string() for _ in range(3)])
+    @pytest.mark.parametrize('email', [random_string() + '@' + random_string() + '.ru' for _ in range(3)])
+    @pytest.mark.parametrize('password', [random_string() for _ in range(3)])
+    def test_create_and_activated_user_with_random_params(
+            self,
+            dm_api_facade,
+            dm_db,
+            login,
+            email,
+            password,
+            assertions
+    ):
+        dm_db.delete_user_by_login(login=login)
+        dm_api_facade.mailhog.delete_all_messages()
+        # register new user
+        dm_api_facade.account.register_new_user(  # прописали обёртку над методом из helpers Account
+            login=login,
+            email=email,
+            password=password
+        )
+        assertions.check_user_was_created(login=login)
+        # activate  user
+        dm_api_facade.account.activate_registered_user(
+            login=login)  # прописали обёртку над методом put_v1_account_token из helpers Account
+        assertions.check_user_was_activated(login=login)
+        # Login  user
+        dm_api_facade.login.login_user(
+            login=login,
+            password=password
+        )
 
-    # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
-    # token = api.login.get_auth_token(login='strtest6',
-    #                                  password='strtest6')  # возвращает авторизационный токен X-Dm-Auth-Token
-    # api.login_api.delete_v1_account_login(headers=token)
+        # Logout  user - ДЗ - Разлогиниться  при передаче заголовков в метод через **kwargs
+        # token = api.login.get_auth_token(login='strtest6',
+        #                                  password='strtest6')  # возвращает авторизационный токен X-Dm-Auth-Token
+        # api.login_api.delete_v1_account_login(headers=token)
 
-    # # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
-    # token = api.login.get_auth_token(login='strtest4', password='strtest4')    # возвращает авторизационный токен X-Dm-Auth-Token
-    # api.login.set_headers(headers=token)
-    # api.login.logout_user()
+        # # Logout  user - ДЗ - Разлогиниться при помощи установки авторизационных заголовков в клиент
+        # token = api.login.get_auth_token(login='strtest4', password='strtest4')    # возвращает авторизационный токен X-Dm-Auth-Token
+        # api.login.set_headers(headers=token)
+        # api.login.logout_user()
 
 
 def random_string_2(begin=1, end=30):

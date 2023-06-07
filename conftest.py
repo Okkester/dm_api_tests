@@ -1,4 +1,6 @@
 import pytest
+
+from generic.assertions.post_v1_account import AssertionsPostV1Account
 from generic.helpers.mailhog import MailhogApi
 from generic.helpers.dm_db import DmDatabase
 from services.dm_api_account import Facade
@@ -33,16 +35,26 @@ options = (  # для управления параметрами конфига
     'database.dm3_5.host'
 )
 
+connect = None
+
 
 @pytest.fixture
 def dm_db():
-    db = DmDatabase(
-        user=v.get('database.dm3_5.user'),
-        password=v.get('database.dm3_5.password'),
-        host=v.get('database.dm3_5.host'),
-        database=v.get('database.dm3_5.database')
-    )
-    return db
+    global connect
+    if connect is None:  # если есть соединение то мы его не создаём
+        connect = DmDatabase(
+            user=v.get('database.dm3_5.user'),
+            password=v.get('database.dm3_5.password'),
+            host=v.get('database.dm3_5.host'),
+            database=v.get('database.dm3_5.database')
+        )
+    yield connect  # если соединения нет , то создаём его
+    connect.db.db.close()  # по итогу соединение всегда закрываем
+
+
+@pytest.fixture
+def assertions(dm_db):
+    return AssertionsPostV1Account(dm_db)
 
 
 @pytest.fixture(autouse=True)  # autouse=True означает что эта опция будет запускаться всегда
@@ -62,7 +74,6 @@ def pytest_addoption(parser):
     parser.addoption('--env', action='store', default='stg')  # чтение конфига stg по умолчанию
     for option in options:
         parser.addoption(f'--{option}', action='store', default=None)
-
 
 # То есть теперь все опции, которые нужны для работы с конфигом , вычитываем в виртуальное окружение и из этого
 # виртуального окружения всё запускаем. То есть мы избавилсь от захардкоженных хостов, логинов и паролей и перенесли

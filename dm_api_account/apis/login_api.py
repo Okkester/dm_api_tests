@@ -5,6 +5,7 @@ from requests import session
 from restclient.restclient import Restclient
 from dm_api_account.models.user_envelope_model import UserEnvelope
 from dm_api_account.utilities import validate_request_json, validate_status_code
+import allure
 
 
 class LoginApi:
@@ -21,11 +22,11 @@ class LoginApi:
         :param json: login_credentials_model
         :return:
         """
-
-        response = self.client.post(
-            path=f"/v1/account/login",
-            json=validate_request_json(json)
-        )
+        with allure.step("Авторизация пользователя"):
+            response = self.client.post(
+                path=f"/v1/account/login",
+                json=validate_request_json(json)
+            )
         validate_status_code(response, status_code)
         if response.status_code == 200:
             UserEnvelope(**response.json())
@@ -63,10 +64,11 @@ class LoginApi:
         Logout as current user
         :return:
         """
-        response = self.client.delete(
-            path=f"/v1/account/login",
-            **kwargs
-        )
+        with allure.step("Логаут пользователя"):
+            response = self.client.delete(
+                path=f"/v1/account/login",
+                **kwargs
+            )
         validate_status_code(response, status_code)
         return response
 
@@ -79,9 +81,10 @@ class LoginApi:
         Logout from every device
         :return:
         """
-        response = self.client.delete(
-            path=f"/v1/account/login/all",
-            **kwargs
-        )
+        with allure.step("Регистрация пользователя на всех устройствах"):
+            response = self.client.delete(
+                path=f"/v1/account/login/all",
+                **kwargs
+            )
         validate_status_code(response, status_code)
         return response
