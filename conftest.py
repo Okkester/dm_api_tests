@@ -52,6 +52,17 @@ def dm_db():
     connect.db.db.close()  # по итогу соединение всегда закрываем
 
 
+# @pytest.fixture
+# def dm_db():
+#     db = DmDatabase(
+#         user=v.get('database.dm3_5.user'),
+#         password=v.get('database.dm3_5.password'),
+#         host=v.get('database.dm3_5.host'),
+#         database=v.get('database.dm3_5.database')
+#     )
+#     return db
+
+
 @pytest.fixture
 def assertions(dm_db):
     return AssertionsPostV1Account(dm_db)
