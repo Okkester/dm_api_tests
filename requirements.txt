@@ -1,3 +1,7 @@
+git+https://github.com/Okkester/orm_client.git
+git+https://github.com/Okkester/db_client.git
+git+https://github.com/Okkester/restclient.git
+git+https://github.com/Okkester/dm_api_account.git
 requests
 pytest
 structlog
