@@ -1,11 +1,10 @@
-import time
-
 import allure
 import pytest
 from hamcrest import assert_that, has_entries
 from collections import namedtuple
 from string import ascii_letters, digits
 import random
+from data.post_v1_account import PostV1AccountData as user_data
 
 
 def random_string():
@@ -32,7 +31,7 @@ class TestsPostV1Account:
     def prepare_user(self, dm_api_facade, dm_db):
         user = namedtuple('User',
                           'login, email, password')  # объект namedtuple 'User',в котором указаны хранимые в нём поля
-        User = user(login="intest28", email="intest28@mail.ru", password="intest28")
+        User = user(login=user_data.login, email=user_data.email, password=user_data.password)
         dm_db.delete_user_by_login(login=User.login)  # удаление юзера из БД
         dataset = dm_db.get_user_by_login(login=User.login)
         assert len(dataset) == 0  # проверка того что такого юзера нет в БД

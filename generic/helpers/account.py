@@ -1,9 +1,13 @@
-from dm_api_account.models import Registration
+from apis.dm_api_account.models import Registration
 import allure
+try:
+    from services.dm_api_account import Facade
+except ImportError:
+    ...
 
 
 class Account:  # отвечает за регистрацию и активацию юзера
-    def __init__(self, facade): # в параметр facade будет приходить класс Facade
+    def __init__(self, facade: Facade): # в параметр facade будет приходить класс Facade
         self.facade = facade
 
     # ниже функции описывают обёртки над методами

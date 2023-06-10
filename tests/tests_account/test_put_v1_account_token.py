@@ -1,8 +1,6 @@
-import requests
 from services.dm_api_account import Facade
-import json
 from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
-from dm_api_account.models.user_envelope_model import UserRole
+from apis.dm_api_account import UserRole
 # from services.mailhog import MailhogApi  # импорт чтобы брать данные из класса MailhogApi
 import structlog
 

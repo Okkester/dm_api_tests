@@ -1,7 +1,6 @@
-import requests
 from services.dm_api_account import Facade
 from hamcrest import assert_that, has_properties  # для сравнения ИЗБРАННЫХ полей с ожидаемыми полями в ответе
-from dm_api_account.models.user_envelope_model import UserRole
+from apis.dm_api_account import UserRole
 import structlog
 
 structlog.configure(
@@ -11,53 +10,51 @@ structlog.configure(
 )
 
 
-def test_put_v1_account_password():
+def test_put_v1_account_email():
     api = Facade(host='http://localhost:5051')
     json = {
         "login": "strsdfas0001",
-        "token": "4a680634-96db-4e31-a209-778353c7bc08",
-        "oldPassword": "stf4f0001",
-        "newPassword": "stf4f0002"
+        "email": "trf4f4f0002@mail.ru",
+        "password": "stf4f0001"
     }
-    response = api.account.put_v1_account_password(
+    response = api.account.put_v1_account_email(
         json=json,
         status_code=200
     )
     assert_that(response.resource, has_properties(  # проверка полей модели UserEnvelope
         {
-            "login": "login17713",
+            "login": "strsdfas0001",
             "roles": [UserRole.GUEST, UserRole.PLAYER]
         }
     ))
 
 
 
-# def test_put_v1_account_password():
+
+# def test_put_v1_account_email():
 #     api = DmApiAccount(host='http://localhost:5051')
 #     json = {
-#         "login": "<string>",
-#         "token": "<uuid>",
-#         "oldPassword": "<string>",
-#         "newPassword": "<string>"
+#         "login": "login1771",
+#         "email": "login1771@mail.ru",
+#         "password": "login1771login1771"
 #     }
-#     response = api.account.put_v1_account_password(
+#     response = api.account.put_v1_account_email(
 #         json=json
 #     )
 #     print(response)
 
 
-# def put_v1_account_password():
+# def put_v1_account_email():
 #     """
-#     Change registered user password
+#     Change registered user email
 #     :return:
 #     """
-#     url = "http://localhost:5051/v1/account/password"
+#     url = "http://localhost:5051/v1/account/email"
 #
 #     payload = {
 #       "login": "<string>",
-#       "token": "<uuid>",
-#       "oldPassword": "<string>",
-#       "newPassword": "<string>"
+#       "password": "<string>",
+#       "email": "<string>"
 #     }
 #     headers = {
 #       'X-Dm-Auth-Token': '<string>',
@@ -70,6 +67,6 @@ def test_put_v1_account_password():
 #       method="PUT",
 #       url=url,
 #       headers=headers,
-#       data=payload
+#       json=payload
 #     )
 #     return response

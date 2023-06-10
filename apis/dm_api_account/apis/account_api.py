@@ -1,12 +1,10 @@
-import requests
 from requests import Response  # для поддержки возврата объекта response
-from ..models import *
-from requests import session
-from restclient.restclient import Restclient
-from dm_api_account.models.user_envelope_model import UserEnvelope
-from dm_api_account.models.user_details_envelope_model import UserDetailsEnvelope
-from dm_api_account.utilities import validate_request_json, validate_status_code
+from common_libs.restclient.restclient import Restclient
+from apis.dm_api_account.models.user_envelope_model import UserEnvelope
+from apis.dm_api_account.models.user_details_envelope_model import UserDetailsEnvelope
+from apis.dm_api_account.utilities import validate_request_json, validate_status_code
 import allure
+from apis.dm_api_account.models import *
 
 
 class AccountApi:  # Это наш клиент

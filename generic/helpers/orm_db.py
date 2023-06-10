@@ -1,7 +1,7 @@
 from typing import List
 from sqlalchemy import select, delete
 from generic.helpers.orm_models import Users
-from orm_client.orm_client import OrmClient
+from common_libs.orm_client import OrmClient
 import allure
 
 
