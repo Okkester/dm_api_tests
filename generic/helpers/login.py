@@ -27,9 +27,11 @@ class Login:  # отвечает за авторизацию
         return token
 
     def logout_user(self, **kwargs):
-        response = self.facade.login_api.delete_v1_account_login(**kwargs)
+        with allure.step("Логаут пользователя"):
+            response = self.facade.login_api.delete_v1_account_login(**kwargs)
         return response
 
     def logout_user_from_all_devices(self, **kwargs):
-        response = self.facade.login_api.delete_v1_account_login_all(**kwargs)
+        with allure.step("Логаут пользователя на всех устройствах"):
+            response = self.facade.login_api.delete_v1_account_login_all(**kwargs)
         return response
